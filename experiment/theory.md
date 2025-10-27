@@ -8,7 +8,7 @@ Transmitter is assigned the same frequency for transmits information to the targ
 
 In cellular communication a carrier frequency is re-used to support a high number of users. Re-use of frequency means that the same frequency may be used simultaneously in two di erent cells for supporting two different active users at the same time. As a result of the simultaneous transmission on the same carrier frequency, interference occurs.
 
-1.1 Uplink SINR:
+### 1.1 Uplink SINR:
 
 If the Base Station 1 (BS_1) is connected to Mobile Station A (MS_A) and Base Station 2 (BS_2) is connected to Mobile Station B (MS_B) and BS_1 and BS_2 are residing in co- channel cells where MS_A and MS_B are operating on the same carrier frequency, then, for Base Station 1, MS_A-BS_1 is the desired link and MS_B-BS_1 is the interfering link in uplink and for Base Station 2, MS_B-BS_2 is the desired link and MS_A-BS_2 is the interfering link in uplink and vice-versa.
 
