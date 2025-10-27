@@ -40,17 +40,17 @@ Considering the following,
 
 Figure 1. Illustration of Uplink SINR: d_(1A) is the straight line distance parallel to the earth crust between MS_A and BS_1 . d_(2A) is the straight line distance parallel to the earth crust between MS_A and BS_2 . d_(1B) is the straight line distance parallel to the earth crust between MS_A and BS_1 . d_(2B) is the straight line distance parallel to the earth crust between MS_A and BS_2 . theta_(1A) is the angle of the transmission line between MS_A and BS_1 with the straight line between MS_A and BS_1 parallel to the earth crust. theta_(2A) is the angle of the transmission line between MS_A and BS_2 with the straight line between MS_A and BS_2 parallel to the earth crust. theta_(1B) is the angle of the transmission line between MS_B and BS_1 with the straight line between MS_B and BS_1 parallel to the earth crust. theta_(2B) is the angle of the transmission line between MS_B and BS_2 with the straight line between MS_B and BS_2 parallel to the earth crust.
 
-Usually,P_(R_x1A),P_(R_x1B),P_(R_x2A),P_(R_x2B),P_(N1A) and P_(N2B) are given in dBm. So, these parameters are converted into equivalent watt. After obtaining P_(R_x1A),P_(R_x1B),P_(R_x2A),P_(R_x2B),P_(N1A) and P_(N2B) parameters in watt, $|SINR_{1A}|_{watt}$ , $|SINR_{1B}|_{watt}$ , $|SINR_{2A}|_{watt}$ and $|SINR_{2B}|_{watt}$ are calculated using the following formula:
+Usually,P_(R_x1A),P_(R_x1B),P_(R_x2A),P_(R_x2B),P_(N1A) and P_(N2B) are given in dBm. So, these parameters are converted into equivalent watt. After obtaining P_(R_x1A),P_(R_x1B),P_(R_x2A),P_(R_x2B),P_(N1A) and P_(N2B) parameters in watt, $$|SINR_{1A}|_{watt}$ , $|SINR_{1B}|_{watt}$ , $|SINR_{2A}|_{watt}$$ and $|SINR_{2B}|_{watt}$ are calculated using the following formula:
 
 $$|SINR_(1A)|_{watt} = [P_(R_x1A) / (P_(R_x1B) + P_(N1A))]$$
 
-$|SINR_(1B)|_{watt} = [P_(R_x1B) / (P_(R_x1A) + P_(N1B))]$
+$$|SINR_(1B)|_{watt} = [P_(R_x1B) / (P_(R_x1A) + P_(N1B))]$$
 
-$|SINR_(2A)|_{watt} = [P_(R_x2A) / (P_(R_x2B) + P_(N2A))]$
+$$|SINR_(2A)|_{watt} = [P_(R_x2A) / (P_(R_x2B) + P_(N2A))]$$
 
-$|SINR_(2B)|_{watt} = [P_(R_x2B) / (P_(R_x2A) + P_(N2B))]$
+$$|SINR_(2B)|_{watt} = [P_(R_x2B) / (P_(R_x2A) + P_(N2B))]$$
 
-Then,the corresponding $|SINR_(1A)|_(dB),|SINR_(1B)|_(dB),|SINR_(2A)|_(dB) \text{ and } |SINR_(2B)|_(dB)$ are calculated
+Then,the corresponding $$|SINR_(1A)|_(dB),|SINR_(1B)|_(dB),|SINR_(2A)|_(dB) \text{ and } |SINR_(2B)|_(dB)$$ are calculated
 
 The above Uplink SINR calculation includes the effects of 2 Mobile Stations at each BS. Proceeding in a similar fashion, the effects of other Mobile Stations can be included in the Uplink SINR calculation for each BS as usually occur in practice for cellular architecture.
 
