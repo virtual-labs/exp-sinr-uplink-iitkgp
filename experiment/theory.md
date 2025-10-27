@@ -34,7 +34,9 @@ Considering the following,
 
 10. P_(N2A) is the received noise power by BS_2 when it is connected to MS_A.
 
-[Image placeholder: images/theory2.png]
+<div align="center">
+    <img src="images/theory2.png" alt="Large Scale Fading">  
+      </div>
 
 Figure 1. Illustration of Uplink SINR: d_(1A) is the straight line distance parallel to the earth crust between MS_A and BS_1 . d_(2A) is the straight line distance parallel to the earth crust between MS_A and BS_2 . d_(1B) is the straight line distance parallel to the earth crust between MS_A and BS_1 . d_(2B) is the straight line distance parallel to the earth crust between MS_A and BS_2 . theta_(1A) is the angle of the transmission line between MS_A and BS_1 with the straight line between MS_A and BS_1 parallel to the earth crust. theta_(2A) is the angle of the transmission line between MS_A and BS_2 with the straight line between MS_A and BS_2 parallel to the earth crust. theta_(1B) is the angle of the transmission line between MS_B and BS_1 with the straight line between MS_B and BS_1 parallel to the earth crust. theta_(2B) is the angle of the transmission line between MS_B and BS_2 with the straight line between MS_B and BS_2 parallel to the earth crust.
 
