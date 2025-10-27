@@ -42,7 +42,7 @@ Figure 1. Illustration of Uplink SINR: d_(1A) is the straight line distance para
 
 Usually,P_(R_x1A),P_(R_x1B),P_(R_x2A),P_(R_x2B),P_(N1A) and P_(N2B) are given in dBm. So, these parameters are converted into equivalent watt. After obtaining P_(R_x1A),P_(R_x1B),P_(R_x2A),P_(R_x2B),P_(N1A) and P_(N2B) parameters in watt, $|SINR_{1A}|_{watt}$ , $|SINR_{1B}|_{watt}$ , $|SINR_{2A}|_{watt}$ and $|SINR_{2B}|_{watt}$ are calculated using the following formula:
 
-$|SINR_(1A)|_{watt} = [P_(R_x1A) / (P_(R_x1B) + P_(N1A))]$
+$$|SINR_(1A)|_{watt} = [P_(R_x1A) / (P_(R_x1B) + P_(N1A))]$$
 
 $|SINR_(1B)|_{watt} = [P_(R_x1B) / (P_(R_x1A) + P_(N1B))]$
 
