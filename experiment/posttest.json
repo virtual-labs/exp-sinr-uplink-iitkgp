@@ -3,114 +3,114 @@
 	  "version": 2.0,
   "questions": [
     {
-    "question": "1. If the distance from the transmitter is doubled, and the pathloss exponent is two (like in free space), by how much does the received signal power decrease?",
+    "question": "1. What is 'uplink' in a cellular system?",
     "answers": {
-      "a": "It decreases by half.",
-      "b": "It decreases by a factor of four.",
-      "c": "It doubles.",
-      "d": "It does not change."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "2. When comparing two signals, one at a very high carrier frequency and one at a very low carrier frequency, which one will experience more pathloss over the same distance in free space?",
-    "answers": {
-      "a": "The low-frequency signal.",
-      "b": "The high-frequency signal.",
-      "c": "Both will experience the same pathloss.",
-      "d": "It depends on the transmitter power."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "3. What is the main purpose of raising the transmitter antenna height on a cellular tower?",
-    "answers": {
-      "a": "To decrease the carrier frequency.",
-      "b": "To reduce interference from other towers.",
-      "c": "To increase the signal's range by clearing obstacles.",
-      "d": "To reduce the transmitter power required."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "4. If you are in a building and your cell phone's received signal strength is weak, what is the most likely reason related to pathloss?",
-    "answers": {
-      "a": "The transmitter power of the base station is too low.",
-      "b": "The carrier frequency is too low.",
-      "c": "The pathloss exponent is very high due to walls and obstructions.",
-      "d": "The transmitter antenna is too high."
-    },
-    "correctAnswer": "c",
-    "difficulty": "medium"
-  },
-  {
-    "question": "5. Which of these factors does *not* directly influence the pathloss calculation, but rather the *final* received signal strength?",
-    "answers": {
-      "a": "Carrier frequency.",
-      "b": "Transmitter antenna height.",
-      "c": "Distance of separation.",
-      "d": "Transmitter power."
-    },
-    "correctAnswer": "d",
-    "difficulty": "medium"
-  },
-  {
-    "question": "6. A pathloss exponent of 4 is measured in a certain environment. What does this high value suggest?",
-    "answers": {
-      "a": "A clear, unobstructed line-of-sight path.",
-      "b": "A signal that is being guided, like in a tunnel.",
-      "c": "A very lossy environment with many reflections and obstructions.",
-      "d": "An environment where signal strength increases with distance."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "7. How does increasing the receiver antenna height, for example, by moving your phone from your pocket to your ear, typically affect the received signal?",
-    "answers": {
-      "a": "It has no effect.",
-      "b": "It significantly increases the pathloss.",
-      "c": "It can slightly improve the signal by reducing local obstructions.",
-      "d": "It changes the carrier frequency."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "8. To calculate the received signal strength, you need the transmitter power and the pathloss. How are they combined?",
-    "answers": {
-      "a": "Transmitter power is added to the pathloss.",
-      "b": "Pathloss is subtracted from the transmitter power.",
-      "c": "Transmitter power is multiplied by the pathloss.",
-      "d": "Transmitter power is divided by the pathloss."
-    },
-    "correctAnswer": "b",
-    "difficulty": "medium"
-  },
-  {
-    "question": "9. A pathloss prediction formula is used primarily to...",
-    "answers": {
-      "a": "Choose the brand of the transmitter.",
-      "b": "Estimate the coverage area and plan a wireless network.",
-      "c": "Calculate the data speed of the connection.",
-      "d": "Determine the physical size of the receiver antenna."
+      "a": "The communication from the base station to the mobile phone.",
+      "b": "The communication from the mobile phone to the base station.",
+      "c": "The communication between two mobile phones directly.",
+      "d": "The communication from the base station to the central network."
     },
     "correctAnswer": "b",
     "difficulty": "beginner"
   },
   {
-    "question": "10. In a real-world city environment, the measured pathloss is almost always...?",
+    "question": "2. An 'interfering user' in an uplink scenario is...",
     "answers": {
-      "a": "Greater than the pathloss predicted by the free-space model.",
-      "b": "Less than the pathloss predicted by the free-space model.",
-      "c": "Exactly equal to the pathloss predicted by the free-space model.",
-      "d": "Zero."
+      "a": "a base station on the same frequency.",
+      "b": "a mobile phone in a different cell on the same frequency, whose signal is picked up by your base station.",
+      "c": "a mobile phone in your own cell on a different frequency.",
+      "d": "a source of background noise."
+    },
+    "correctAnswer": "b",
+    "difficulty": "medium"
+  },
+  {
+    "question": "3. What is the primary purpose of the 'vertical beam pattern' of a base station antenna?",
+    "answers": {
+      "a": "To control the signal strength in the horizontal (left-right) direction.",
+      "b": "To change the frequency of operation.",
+      "c": "To control the signal strength in the vertical (up-down) direction.",
+      "d": "To make the antenna physically taller."
+    },
+    "correctAnswer": "c",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "4. If a base station's antenna has *no* downtilt, where is its main reception lobe (for uplink) pointed?",
+    "answers": {
+      "a": "Directly at the ground beneath the tower.",
+      "b": "Straight up into the sky.",
+      "c": "Towards the horizontal (the horizon).",
+      "d": "Equally in all directions."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "5. By applying downtilt, a base station's antenna focuses its reception. What is the effect on the *uplink* SINR for a user *within* the cell?",
+    "answers": {
+      "a": "It can improve SINR by reducing interference received from distant co-channel users.",
+      "b": "It always makes the SINR worse by reducing the desired signal.",
+      "c": "It has no effect on the uplink, only the downlink.",
+      "d": "It eliminates noise completely."
     },
     "correctAnswer": "a",
+    "difficulty": "hard"
+  },
+  {
+    "question": "6. A mobile phone at the cell edge must use 'power control'. Why is this important for *uplink* SINR?",
+    "answers": {
+      "a": "It must transmit with *less* power to avoid interfering with its own base station.",
+      "b": "It must transmit with *more* power to ensure its signal is received, but not so much that it badly interferes with other cells.",
+      "c": "It must change its frequency to avoid interference.",
+      "d": "It must aim its signal upwards, matching the base station's tilt."
+    },
+    "correctAnswer": "b",
     "difficulty": "medium"
+  },
+  {
+    "question": "7. How does a base station's antenna *gain* (due to its beam pattern) affect the 'desired signal' in the uplink SINR calculation?",
+    "answers": {
+      "a": "It doesn't; only the mobile phone's power matters.",
+      "b": "The base station's gain in the direction of the mobile phone *amplifies* the received desired signal.",
+      "c": "It only amplifies the noise, not the signal.",
+      "d": "It only amplifies the interference, not the signal."
+    },
+    "correctAnswer": "b",
+    "difficulty": "medium"
+  },
+  {
+    "question": "8. How does the same antenna gain (from beam tilt) affect the 'interference' component in the uplink SINR calculation?",
+    "answers": {
+      "a": "It amplifies the interference received from co-channel users based on their direction.",
+      "b": "It has no effect on interference.",
+      "c": "It blocks all interference.",
+      "d": "It only affects the desired signal."
+    },
+    "correctAnswer": "a",
+    "difficulty": "hard"
+  },
+  {
+    "question": "9. If a base station's downtilt is *too small* (e.g., pointed at the horizon), it will likely receive strong interference from:",
+    "answers": {
+      "a": "Users who are very close to the tower.",
+      "b": "Users who are very far away in other cells.",
+      "c": "Other base stations (this is a downlink issue).",
+      "d": "Background noise sources."
+    },
+    "correctAnswer": "b",
+    "difficulty": "medium"
+  },
+  {
+    "question": "10. In the uplink SINR, what happens if the 'interference' component is much larger than the 'desired signal' component?",
+    "answers": {
+      "a": "The connection quality will be very good.",
+      "b": "The base station will easily understand the mobile phone's data.",
+      "c": "The connection will be poor, and the base station will struggle to understand the mobile phone's data.",
+      "d": "The noise level will automatically decrease to compensate."
+    },
+    "correctAnswer": "c",
+    "difficulty": "beginner"
   }
 
   ]
