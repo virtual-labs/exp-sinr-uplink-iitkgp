@@ -1,114 +1,114 @@
   {
 	  "version": 2.0,
   "questions": [
-    {
-    "question": "1. What does 'pathloss' fundamentally describe in a wireless communication system?",
+      {
+    "question": "1. For an 'uplink' SINR calculation, what is the 'desired signal'?",
     "answers": {
-      "a": "The signal amplification at the transmitter.",
-      "b": "The reduction in signal power density as it propagates through space.",
-      "c": "The speed of the data being transmitted.",
-      "d": "The total power consumed by the receiver."
+      "a": "The signal from the base station, received at the mobile phone.",
+      "b": "The signal from the mobile phone, received at its serving base station.",
+      "c": "The signal from an interfering mobile phone.",
+      "d": "The noise at the mobile phone's receiver."
     },
     "correctAnswer": "b",
     "difficulty": "beginner"
   },
   {
-    "question": "2. If the transmitter power is doubled, what is the expected change in the received signal strength, assuming all other factors are constant?",
+    "question": "2. What is the primary source of 'interference' in an uplink SINR calculation?",
     "answers": {
-      "a": "It will be halved.",
-      "b": "It will be squared.",
-      "c": "It will also double (or increase by 3 dB).",
-      "d": "It will not change."
-    },
-    "correctAnswer": "c",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "3. As the distance between the transmitter and receiver increases, what generally happens to the pathloss?",
-    "answers": {
-      "a": "It decreases.",
-      "b": "It increases.",
-      "c": "It stays the same.",
-      "d": "It becomes zero."
-    },
-    "correctAnswer": "b",
-    "difficulty": "beginner"
-  },
-  {
-    "question": "4. A larger 'pathloss exponent' value typically implies which kind of environment?",
-    "answers": {
-      "a": "An open field with a clear line of sight.",
-      "b": "A dense urban area with many buildings and obstacles.",
-      "c": "A perfect vacuum (free space).",
-      "d": "An environment with no signal loss."
+      "a": "Signals from co-channel base stations received at the mobile phone.",
+      "b": "Signals from other mobile phones in other cells (using the same frequency) received at the serving base station.",
+      "c": "Noise at the serving base station's receiver.",
+      "d": "The serving base station's own transmitted signal."
     },
     "correctAnswer": "b",
     "difficulty": "medium"
   },
   {
-    "question": "5. In typical propagation models, how does increasing the carrier frequency affect the pathloss for a fixed distance?",
+    "question": "3. Where is the 'noise' component measured or considered in an uplink SINR calculation?",
     "answers": {
-      "a": "It decreases the pathloss.",
-      "b": "It has no effect on the pathloss.",
-      "c": "It increases the pathloss.",
-      "d": "It only affects the signal's speed, not its loss."
+      "a": "At the mobile phone's transmitter.",
+      "b": "In the air between the phone and the base station.",
+      "c": "At the base station's receiver.",
+      "d": "At the interfering mobile phone's receiver."
     },
     "correctAnswer": "c",
     "difficulty": "medium"
   },
   {
-    "question": "6. What is the general effect of increasing the transmitter antenna height on the received signal strength?",
+    "question": "4. How does a base station's antenna downtilt affect the *uplink*?",
     "answers": {
-      "a": "It decreases the received signal strength.",
-      "b": "It has no predictable effect.",
-      "c": "It increases the received signal strength, often by clearing obstructions.",
-      "d": "It only changes the signal's frequency."
+      "a": "It only affects the downlink; it has no effect on the uplink.",
+      "b": "It changes the transmit power of the mobile phone.",
+      "c": "It changes the gain of the base station's antenna for receiving signals from different vertical angles.",
+      "d": "It changes the frequency the mobile phone uses."
     },
     "correctAnswer": "c",
-    "difficulty": "beginner"
+    "difficulty": "medium"
   },
   {
-    "question": "7. How does raising the receiver antenna height typically impact the received signal strength?",
+    "question": "5. If a base station *increases* its downtilt, what is the likely effect on the received signal from an *interfering* mobile phone located very far away?",
     "answers": {
-      "a": "It generally improves the received signal strength.",
-      "b": "It generally degrades the received signal strength.",
-      "c": "It has no impact on the received signal strength.",
-      "d": "It inverts the phase of the signal."
+      "a": "The interfering signal strength will increase.",
+      "b": "The interfering signal strength will be unaffected.",
+      "c": "The interfering signal strength will decrease, as it is now outside the antenna's main reception lobe.",
+      "d": "The noise level will increase."
     },
-    "correctAnswer": "a",
-    "difficulty": "beginner"
+    "correctAnswer": "c",
+    "difficulty": "hard"
   },
   {
-    "question": "8. What is the primary purpose of using a pathloss prediction formula?",
+    "question": "6. A mobile user is at the far edge of their cell. If the serving base station applies *excessive* downtilt, what might happen to the *uplink* signal from this user?",
     "answers": {
-      "a": "To calculate the exact manufacturing cost of a transmitter.",
-      "b": "To estimate the received signal strength at various locations.",
-      "c": "To determine the color of the antenna.",
-      "d": "To measure the speed of light."
+      "a": "The base station will receive the signal much more strongly.",
+      "b": "The base station will receive the signal more weakly, as the user is no longer in the main reception lobe.",
+      "c": "The mobile phone will transmit with less power.",
+      "d": "The interference from other cells will be zero."
+    },
+    "correctAnswer": "b",
+    "difficulty": "hard"
+  },
+  {
+    "question": "7. What is the main benefit of using antenna downtilt for *uplink* performance?",
+    "answers": {
+      "a": "It increases the signal received from every mobile phone, no matter how far.",
+      "b": "It reduces interference received from distant co-channel mobile phones, improving the uplink SINR.",
+      "c": "It eliminates all background noise at the base station.",
+      "d": "It allows the mobile phone to use less battery power."
     },
     "correctAnswer": "b",
     "difficulty": "medium"
   },
   {
-    "question": "9. A pathloss exponent of two is characteristic of what ideal environment?",
+    "question": "8. An interfering mobile phone (in another cell) moves *closer* to *your* serving base station. What happens to your uplink SINR?",
     "answers": {
-      "a": "A dense forest.",
-      "b": "A submarine communication channel.",
-      "c": "An indoor office with many walls.",
-      "d": "Free space, with no obstructions."
+      "a": "It increases, because your desired signal gets stronger.",
+      "b": "It stays the same.",
+      "c": "It decreases, because the interfering signal received at your base station gets stronger.",
+      "d": "It decreases, because the noise level increases."
     },
-    "correctAnswer": "d",
+    "correctAnswer": "c",
     "difficulty": "medium"
   },
   {
-    "question": "10. To find the final received signal strength (in logarithmic units like dBm), the calculated pathloss is typically...",
+    "question": "9. A base station antenna with *no* downtilt (or even uptilt) would be more susceptible to what problem in the uplink?",
     "answers": {
-      "a": "Subtracted from the transmitter power (also in logarithmic units).",
-      "b": "Added to the transmitter power.",
-      "c": "Multiplied by the transmitter power.",
-      "d": "Ignored, as it's not part of the calculation."
+      "a": "Receiving too much noise from the ground.",
+      "b": "Being unable to receive signals from users directly under the tower.",
+      "c": "Receiving strong interference from very distant mobile phones in co-channel cells.",
+      "d": "Having its signal blocked by buildings."
     },
-    "correctAnswer": "a",
+    "correctAnswer": "c",
+    "difficulty": "hard"
+  },
+  {
+    "question": "10. In the context of uplink SINR, 'power control' is often used. What is the goal of power control for a mobile phone?",
+    "answers": {
+      "a": "To transmit with maximum power at all times to ensure the strongest signal.",
+      "b": "To adjust its transmit power so the base station receives an adequate signal, without causing excessive interference to other cells.",
+      "c": "To turn off its transmitter to save battery.",
+      "d": "To match the transmit power of the base station."
+    },
+    "correctAnswer": "b",
     "difficulty": "medium"
   }
 
