@@ -1,0 +1,116 @@
+  {
+	  "version": 2.0,
+  "questions": [
+      {
+    "question": "1. For an 'uplink' SINR calculation, what is the 'desired signal'?",
+    "answers": {
+      "a": "The signal from the base station, received at the mobile phone.",
+      "b": "The signal from the mobile phone, received at its serving base station.",
+      "c": "The signal from an interfering mobile phone.",
+      "d": "The noise at the mobile phone's receiver."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "2. What is the primary source of 'interference' in an uplink SINR calculation?",
+    "answers": {
+      "a": "Signals from co-channel base stations received at the mobile phone.",
+      "b": "Signals from other mobile phones in other cells (using the same frequency) received at the serving base station.",
+      "c": "Noise at the serving base station's receiver.",
+      "d": "The serving base station's own transmitted signal."
+    },
+    "correctAnswer": "b",
+    "difficulty": "medium"
+  },
+  {
+    "question": "3. Where is the 'noise' component measured or considered in an uplink SINR calculation?",
+    "answers": {
+      "a": "At the mobile phone's transmitter.",
+      "b": "In the air between the phone and the base station.",
+      "c": "At the base station's receiver.",
+      "d": "At the interfering mobile phone's receiver."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "4. How does a base station's antenna downtilt affect the *uplink*?",
+    "answers": {
+      "a": "It only affects the downlink; it has no effect on the uplink.",
+      "b": "It changes the transmit power of the mobile phone.",
+      "c": "It changes the gain of the base station's antenna for receiving signals from different vertical angles.",
+      "d": "It changes the frequency the mobile phone uses."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "5. If a base station *increases* its downtilt, what is the likely effect on the received signal from an *interfering* mobile phone located very far away?",
+    "answers": {
+      "a": "The interfering signal strength will increase.",
+      "b": "The interfering signal strength will be unaffected.",
+      "c": "The interfering signal strength will decrease, as it is now outside the antenna's main reception lobe.",
+      "d": "The noise level will increase."
+    },
+    "correctAnswer": "c",
+    "difficulty": "hard"
+  },
+  {
+    "question": "6. A mobile user is at the far edge of their cell. If the serving base station applies *excessive* downtilt, what might happen to the *uplink* signal from this user?",
+    "answers": {
+      "a": "The base station will receive the signal much more strongly.",
+      "b": "The base station will receive the signal more weakly, as the user is no longer in the main reception lobe.",
+      "c": "The mobile phone will transmit with less power.",
+      "d": "The interference from other cells will be zero."
+    },
+    "correctAnswer": "b",
+    "difficulty": "hard"
+  },
+  {
+    "question": "7. What is the main benefit of using antenna downtilt for *uplink* performance?",
+    "answers": {
+      "a": "It increases the signal received from every mobile phone, no matter how far.",
+      "b": "It reduces interference received from distant co-channel mobile phones, improving the uplink SINR.",
+      "c": "It eliminates all background noise at the base station.",
+      "d": "It allows the mobile phone to use less battery power."
+    },
+    "correctAnswer": "b",
+    "difficulty": "medium"
+  },
+  {
+    "question": "8. An interfering mobile phone (in another cell) moves *closer* to *your* serving base station. What happens to your uplink SINR?",
+    "answers": {
+      "a": "It increases, because your desired signal gets stronger.",
+      "b": "It stays the same.",
+      "c": "It decreases, because the interfering signal received at your base station gets stronger.",
+      "d": "It decreases, because the noise level increases."
+    },
+    "correctAnswer": "c",
+    "difficulty": "medium"
+  },
+  {
+    "question": "9. A base station antenna with *no* downtilt (or even uptilt) would be more susceptible to what problem in the uplink?",
+    "answers": {
+      "a": "Receiving too much noise from the ground.",
+      "b": "Being unable to receive signals from users directly under the tower.",
+      "c": "Receiving strong interference from very distant mobile phones in co-channel cells.",
+      "d": "Having its signal blocked by buildings."
+    },
+    "correctAnswer": "c",
+    "difficulty": "hard"
+  },
+  {
+    "question": "10. In the context of uplink SINR, 'power control' is often used. What is the goal of power control for a mobile phone?",
+    "answers": {
+      "a": "To transmit with maximum power at all times to ensure the strongest signal.",
+      "b": "To adjust its transmit power so the base station receives an adequate signal, without causing excessive interference to other cells.",
+      "c": "To turn off its transmitter to save battery.",
+      "d": "To match the transmit power of the base station."
+    },
+    "correctAnswer": "b",
+    "difficulty": "medium"
+  }
+
+  ]
+}

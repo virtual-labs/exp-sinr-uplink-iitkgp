@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SINR Calculation - Uplink</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            background-color: #eef2f3;
+        }
+        .control-panel, .readings-panel, .sinr-panel {
+            background-color: #c9e1f3;
+            border: 2px solid #5a7a9a;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .sinr-panel {
+            height: auto; 
+        }
+        .sim-container {
+            background-image: url('images/bg.png');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            height: 480px;
+            border: 2px solid #5a7a9a;
+            overflow: hidden;
+        }
+        .tower {
+            position: absolute;
+            bottom: 45px;
+            width: 80px;
+            height: auto;
+        }
+        .mobile-station {
+            position: absolute;
+            width: 40px;
+            height: auto;
+            cursor: grab;
+            z-index: 10;
+        }
+        .mobile-station:active {
+            cursor: grabbing;
+        }
+        .btn {
+            background-color: #4a90e2;
+            color: white;
+            transition: background-color 0.3s;
+            border: 1px solid #357abd;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            background-color: #357abd;
+        }
+        .btn:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        .btn-fix {
+            background-color: #f59e0b;
+            color: white;
+            border: 1px solid #d97706;
+            padding: 1px 10px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .btn-fix.fixed {
+            background-color: #dc2626;
+        }
+        .input-field {
+            background-color: white;
+            border: 1px solid #8ab6d6;
+        }
+        .info-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            position: absolute;
+            white-space: nowrap;
+            border: 1px solid black;
+            z-index: 20;
+            pointer-events: none;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #8ab6d6;
+            padding: 2px;
+            text-align: center;
+            font-size: 0.7rem;
+        }
+        th {
+            background-color: #a0c7e4;
+        }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); z-index: 999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background-color: #c9e1f3; padding: 2rem;
+            border-radius: 0.5rem; border: 2px solid #8ab6d6;
+        }
+        .tower-label {
+            position: absolute; color: white; background-color: rgba(0,0,0,0.6);
+            padding: 1px 5px; border-radius: 3px; font-size: 0.8rem; font-weight: bold; z-index: 15;
+        }
+        .tilt-control-container {
+             position: absolute; bottom: 25px; color: white; background-color: rgba(0,0,0,0.5);
+             padding: 1px 4px; border-radius: 3px; font-size: 0.75rem;
+        }
+        #readingsTable1 { background-color: #e0e8f0; }
+        #readingsTable2 { background-color: #f0e0e0; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 flex flex-col min-h-screen">
+
+    <div id="initialView" class="text-center p-8 bg-white rounded-lg shadow-lg max-w-2xl mx-auto my-auto">
+        
+        <div>
+            <button id="startExp" class="w-full btn text-lg py-3 rounded-lg">Click here to Start</button>
+        </div>
+    </div>
+
+    <div id="nameModal" class="modal-overlay hidden">
+        <div class="modal-content text-center">
+            <h3 class="text-xl font-semibold mb-4">What is your name?</h3>
+            <input type="text" id="userNameInput" class="input-field w-full p-2 rounded-md mb-4">
+            <button id="submitName" class="btn px-6 py-2 rounded-md">OK</button>
+        </div>
+    </div>
+    
+    <div id="pdf-report-container" class="hidden" style="position: absolute; left: -9999px; top: auto; width: 1400px; background: white; padding: 20px;">
+        <div id="reportContentForPdf"></div>
+    </div>
+
+
+    <div id="experimentView" class="hidden flex-grow flex-col">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-2 mb-2">
+            <div class="md:col-span-2 control-panel p-2 text-center">
+                <h2 class="font-bold">Exp 5B: Uplink</h2>
+                <p id="welcomeMessage" class="text-sm">Welcome!</p>
+                <button id="resetBtn" class="w-full btn py-1 mt-4 rounded-md">Reset</button>
+            </div>
+            
+            <div class="md:col-span-5 control-panel p-3">
+                 <div class="grid grid-cols-12 gap-x-4 gap-y-2 text-sm items-center">
+                    <label class="col-span-2">Ptx_A(dBm):</label>
+                    <input type="number" id="ptx_a" value="23" class="col-span-2 input-field p-1 rounded-md">
+                    <label class="col-span-2 text-right">Pn2(dBm):</label>
+                    <span class="col-span-2 font-bold">-99.84</span>
+                    <div class="col-span-4 flex items-center">
+                        <input type="checkbox" id="verticalBeam" class="h-4 w-4 mr-2">
+                        <label for="verticalBeam">Vertical Beam Pattern</label>
+                    </div>
+                    <label class="col-span-2">Ptx_B(dBm):</label>
+                    <input type="number" id="ptx_b" value="23" class="col-span-2 input-field p-1 rounded-md">
+                    <label class="col-span-2 text-right">Pn1(dBm):</label>
+                    <span class="col-span-2 font-bold">-99.84</span>
+                     <div class="col-span-4 flex items-center">
+                        <input type="checkbox" id="shadowing" class="h-4 w-4 mr-2">
+                        <label for="shadowing">Shadowing</label>
+                    </div>
+                    <label class="col-span-2">fc1(GHz):</label>
+                    <input type="number" id="fc1" value="2.0" step="0.1" class="col-span-2 input-field p-1 rounded-md">
+                    <span class="col-span-8"></span>
+                     <label class="col-span-2">fc2(GHz):</label>
+                    <input type="number" id="fc2" value="2.0" step="0.1" class="col-span-2 input-field p-1 rounded-md">
+                    <span class="col-span-4 font-mono">BW1(MHz)=5.0</span>
+                    <span class="col-span-4 font-mono">BW2(MHz)=5.0</span>
+                </div>
+            </div>
+            
+            <div class="md:col-span-5 readings-panel p-1">
+                <div class="grid grid-cols-2 gap-1">
+                    <div class="overflow-y-auto" style="height: 120px;">
+                        <table id="readingsTable1">
+                            <thead><tr><th>Pr1_A(dB)</th><th>d1_A(m)</th><th>Pr1_B(dB)</th><th>d1_B(m)</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="overflow-y-auto" style="height: 120px;">
+                        <table id="readingsTable2">
+                            <thead><tr><th>Pr2_A(dB)</th><th>d2_A(m)</th><th>Pr2_B(dB)</th><th>d2_B(m)</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-grow grid grid-cols-1 lg:grid-cols-12 gap-2">
+            <div class="lg:col-span-9 flex flex-col">
+                <div class="sim-container rounded-lg shadow-md">
+                    <img src="images/BS1.png" id="bs1" class="tower" style="left: 5%;"> 
+                    <div class="tower-label" style="left: 7%; bottom: 45px;">BS1</div>
+                     <div id="tiltControlBS1" class="tilt-control-container hidden" style="left: 7%;">
+                        Tilt(°): <select id="tiltAngleBS1" class="bg-gray-700 text-white text-xs rounded">
+                            <option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                        </select>
+                    </div>
+                    <div class="tower-label" style="left: 6%; bottom: 5px;">h_BS1: 35.0m</div>
+
+                    <img src="images/BS2.png" id="bs2" class="tower" style="right: 5%;">
+                    <div class="tower-label" style="right: 7%; bottom: 45px;">BS2</div>
+                     <div id="tiltControlBS2" class="tilt-control-container hidden" style="right: 7%;">
+                        Tilt(°): <select id="tiltAngleBS2" class="bg-gray-700 text-white text-xs rounded">
+                            <option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+                        </select>
+                    </div>
+                     <div class="tower-label" style="right: 6%; bottom: 5px;">h_BS2: 35.0m</div>
+
+                    <div id="msA_container" class="mobile-station" style="left: 30%;">
+                        <img src="images/mobile.png" id="msA_img"> 
+                        <div id="msA-tooltip" class="info-box"></div>
+                        <button id="fixBtnA" class="btn-fix">FIX</button>
+                    </div>
+
+                    <div id="msB_container" class="mobile-station" style="left: 60%;">
+                        <img src="images/mobile2.png" id="msB_img"> 
+                        <div id="msB-tooltip" class="info-box"></div>
+                        <button id="fixBtnB" class="btn-fix">FIX</button>
+                    </div>
+                </div>
+                <div class="flex justify-center items-center space-x-4 mt-2">
+                    <button id="takeReadingBtn" class="btn px-6 py-1 rounded-md font-bold">Take Reading</button>
+                </div>
+                 <div class="mt-2 flex-grow" style="min-height: 500px;">
+                    <canvas id="plotCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 flex flex-col gap-2">
+                <div class="sinr-panel p-2 rounded-lg shadow-md">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <h4 class="text-center font-bold text-xs mb-1">SINR_BS1_A(dB)</h4>
+                            <table id="resultsTable1"><tbody></tbody></table>
+                        </div>
+                        <div>
+                            <h4 class="text-center font-bold text-xs mb-1">SINR_BS1_B(dB)</h4>
+                            <table id="resultsTable3"><tbody></tbody></table>
+                        </div>
+                        <div>
+                            <h4 class="text-center font-bold text-xs mb-1">SINR_BS2_A(dB)</h4>
+                            <table id="resultsTable2"><tbody></tbody></table>
+                        </div>
+                        <div>
+                            <h4 class="text-center font-bold text-xs mb-1">SINR_BS2_B(dB)</h4>
+                            <table id="resultsTable4"><tbody></tbody></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="submitBtn" class="btn py-2 rounded-md">SUBMIT</button>
+                    <button id="checkBtn" class="btn py-2 rounded-md">CHECK</button>
+                    <button id="plotBtn" class="btn py-2 rounded-md">PLOT</button>
+                    <button id="reportBtn" class="btn py-2 rounded-md">REPORT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="text-center text-xs text-gray-600 mt-2">
+        FADING CHANNELS & MOBILE COMMUNICATIONS VIRTUAL LABS - IIT KHARAGPUR
+    </footer>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // STATE
+    let userName = '';
+    let readings = [];
+    let plotChart = null;
+    let isDragging = null; 
+    let isMsAFixed = false;
+    let isMsBFixed = false;
+    const MAX_READINGS = 10;
+    const PN_DBM = -99.84; 
+
+    // CONSTANTS
+    const H_BS = 35.0;
+    let H_MS_A = 1.5;
+    let H_MS_B = 1.5;
+    const TOTAL_DISTANCE_M = 1000;
+
+    // DOM ELEMENTS
+    const initialView = document.getElementById('initialView');
+    const experimentView = document.getElementById('experimentView');
+    const nameModal = document.getElementById('nameModal');
+    const startExpBtn = document.getElementById('startExp');
+    const userNameInput = document.getElementById('userNameInput');
+    const submitNameBtn = document.getElementById('submitName');
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const simContainer = document.querySelector('.sim-container');
+    const msA_container = document.getElementById('msA_container');
+    const msB_container = document.getElementById('msB_container');
+    const msATooltip = document.getElementById('msA-tooltip');
+    const msBTooltip = document.getElementById('msB-tooltip');
+    const fixBtnA = document.getElementById('fixBtnA');
+    const fixBtnB = document.getElementById('fixBtnB');
+    const verticalBeamCheckbox = document.getElementById('verticalBeam');
+    const shadowingCheckbox = document.getElementById('shadowing');
+    const tiltControlBS1 = document.getElementById('tiltControlBS1');
+    const tiltControlBS2 = document.getElementById('tiltControlBS2');
+    const takeReadingBtn = document.getElementById('takeReadingBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const checkBtn = document.getElementById('checkBtn');
+    const plotBtn = document.getElementById('plotBtn');
+    const reportBtn = document.getElementById('reportBtn');
+    const plotCanvas = document.getElementById('plotCanvas');
+
+    // EVENT LISTENERS
+    startExpBtn.addEventListener('click', () => {
+        initialView.classList.add('hidden');
+        nameModal.classList.remove('hidden');
+        userNameInput.focus();
+    });
+    
+    submitNameBtn.addEventListener('click', () => {
+        userName = userNameInput.value.trim();
+        if (userName) {
+            welcomeMessage.textContent = `${userName.toUpperCase()}`;
+            nameModal.classList.add('hidden');
+            experimentView.classList.remove('hidden');
+            initializeExperiment();
+        } else {
+            showCustomAlert("Please enter your name.");
+        }
+    });
+    
+    userNameInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') submitNameBtn.click(); });
+
+    [msA_container, msB_container].forEach(ms => {
+        ms.addEventListener('mousedown', (e) => {
+            const isFixed = (ms.id === 'msA_container' && isMsAFixed) || (ms.id === 'msB_container' && isMsBFixed);
+            if (!isFixed) {
+                isDragging = ms;
+                ms.style.cursor = 'grabbing';
+            }
+        });
+    });
+    document.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging.style.cursor = 'grab';
+            isDragging = null;
+        }
+    });
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const rect = simContainer.getBoundingClientRect();
+        
+        let x = e.clientX - rect.left - (isDragging.clientWidth / 2);
+        x = Math.max(0, Math.min(x, rect.width - isDragging.clientWidth));
+        isDragging.style.left = `${x}px`;
+
+        let y = e.clientY - rect.top - (isDragging.clientHeight / 2);
+        y = Math.max(0, Math.min(y, rect.height - isDragging.clientHeight));
+        isDragging.style.top = `${y}px`;
+        isDragging.style.bottom = 'auto';
+
+        updateLiveInfo();
+    });
+    
+    fixBtnA.addEventListener('click', () => {
+        isMsAFixed = !isMsAFixed;
+        fixBtnA.classList.toggle('fixed', isMsAFixed);
+        fixBtnA.textContent = isMsAFixed ? 'FIXED' : 'FIX';
+    });
+    fixBtnB.addEventListener('click', () => {
+        isMsBFixed = !isMsBFixed;
+        fixBtnB.classList.toggle('fixed', isMsBFixed);
+        fixBtnB.textContent = isMsBFixed ? 'FIXED' : 'FIX';
+    });
+    takeReadingBtn.addEventListener('click', takeReading);
+    resetBtn.addEventListener('click', () => {
+        showCustomConfirm("Are you sure you want to reset?", () => initializeExperiment());
+    });
+    submitBtn.addEventListener('click', () => {
+        submitBtn.disabled = true;
+        checkBtn.disabled = false;
+    });
+    checkBtn.addEventListener('click', checkResults);
+    plotBtn.addEventListener('click', plotResults);
+    reportBtn.addEventListener('click', generateReport);
+    
+    document.querySelectorAll('input, select').forEach(el => el.addEventListener('change', updateLiveInfo));
+    verticalBeamCheckbox.addEventListener('change', () => {
+        const isChecked = verticalBeamCheckbox.checked;
+        tiltControlBS1.classList.toggle('hidden', !isChecked);
+        tiltControlBS2.classList.toggle('hidden', !isChecked);
+        updateLiveInfo();
+    });
+
+    // FUNCTIONS
+    function initializeExperiment() {
+        readings = [];
+        if (plotChart) {
+            plotChart.destroy();
+            plotChart = null;
+        }
+
+        // Reset control panel inputs
+        document.getElementById('ptx_a').value = '23';
+        document.getElementById('ptx_b').value = '23';
+        document.getElementById('fc1').value = '2.0';
+        document.getElementById('fc2').value = '2.0';
+        document.getElementById('verticalBeam').checked = false;
+        document.getElementById('shadowing').checked = false;
+        document.getElementById('tiltAngleBS1').value = '0';
+        document.getElementById('tiltAngleBS2').value = '0';
+        tiltControlBS1.classList.add('hidden');
+        tiltControlBS2.classList.add('hidden');
+
+        const initialTop = simContainer.clientHeight * 0.85;
+        msA_container.style.left = '30%';
+        msA_container.style.top = `${initialTop}px`;
+        msB_container.style.left = '60%';
+        msB_container.style.top = `${initialTop}px`;
+
+        isMsAFixed = isMsBFixed = false;
+        [fixBtnA, fixBtnB].forEach(btn => {
+            btn.classList.remove('fixed');
+            btn.textContent = 'FIX';
+        });
+
+        document.querySelector('#readingsTable1 tbody').innerHTML = '';
+        document.querySelector('#readingsTable2 tbody').innerHTML = '';
+        const sinrTables = document.querySelectorAll('.sinr-panel table tbody');
+        sinrTables.forEach(tbody => tbody.innerHTML = '');
+        for (let i = 0; i < MAX_READINGS; i++) {
+            sinrTables.forEach(tb => tb.innerHTML += `<tr><td class="dist p-1">0.0m</td><td class="p-1"><div class="flex items-center justify-between gap-1"><input type="number" class="user-sinr w-1/2" value="0" disabled><span class="calc-sinr w-1/2"></span></div></td></tr>`);
+        }
+        
+        takeReadingBtn.disabled = false;
+        takeReadingBtn.textContent = 'Take Reading';
+        submitBtn.disabled = false;
+        checkBtn.disabled = true;
+        plotBtn.disabled = true;
+        reportBtn.disabled = true;
+
+        updateLiveInfo();
+    }
+
+    function getDistances(msElement) {
+        const scale = TOTAL_DISTANCE_M / (simContainer.querySelector('#bs2').offsetLeft - simContainer.querySelector('#bs1').offsetLeft);
+        const d1 = Math.max(1, Math.abs(msElement.offsetLeft - simContainer.querySelector('#bs1').offsetLeft) * scale);
+        const d2 = Math.max(1, Math.abs(msElement.offsetLeft - simContainer.querySelector('#bs2').offsetLeft) * scale);
+        return { d1, d2 };
+    }
+    
+    function calculateReceivedPower(pt_dBm, d_m, h_ms, fc_ghz, bsIndex) {
+        const fc_mhz = fc_ghz * 1000;
+        const d_km = d_m / 1000;
+        if (d_km <= 0) return pt_dBm;
+        const a_hm = (1.1 * Math.log10(fc_mhz) - 0.7) * h_ms - (1.56 * Math.log10(fc_mhz) - 0.8);
+        const pathLoss = 69.55 + 26.16 * Math.log10(fc_mhz) - 13.82 * Math.log10(H_BS) - a_hm + (44.9 - 6.55 * Math.log10(H_BS)) * Math.log10(d_km);
+        let pr = pt_dBm - pathLoss;
+
+        if (verticalBeamCheckbox.checked) {
+            const tilt = parseFloat(document.getElementById(`tiltAngleBS${bsIndex}`).value);
+            const verticalAngle = Math.atan((H_BS - h_ms) / d_m) * (180 / Math.PI);
+            pr -= Math.min(12 * Math.pow((verticalAngle - tilt) / 10, 2), 20);
+        }
+        if (document.getElementById('shadowing').checked) {
+            let u, v, s;
+            do { u = Math.random()*2-1; v = Math.random()*2-1; s = u*u + v*v; } while (s >= 1 || s === 0);
+            pr += (u * Math.sqrt(-2 * Math.log(s) / s)) * 6;
+        }
+        return pr;
+    }
+
+    function updateLiveInfo() {
+        const rect = simContainer.getBoundingClientRect();
+        const maxY = rect.height - msA_container.clientHeight;
+
+        H_MS_A = Math.max(1.5, 1.5 + ((maxY - parseFloat(msA_container.style.top)) / maxY) * 43.5);
+        H_MS_B = Math.max(1.5, 1.5 + ((maxY - parseFloat(msB_container.style.top)) / maxY) * 43.5);
+
+        const { d1: d1A, d2: d2A } = getDistances(msA_container);
+        const { d1: d1B, d2: d2B } = getDistances(msB_container);
+        const ptxA = parseFloat(document.getElementById('ptx_a').value);
+        const ptxB = parseFloat(document.getElementById('ptx_b').value);
+        const fc1 = parseFloat(document.getElementById('fc1').value);
+        const fc2 = parseFloat(document.getElementById('fc2').value);
+
+        const pr1A = calculateReceivedPower(ptxA, d1A, H_MS_A, fc1, 1);
+        const pr2A = calculateReceivedPower(ptxA, d2A, H_MS_A, fc2, 2);
+        const pr1B = calculateReceivedPower(ptxB, d1B, H_MS_B, fc1, 1);
+        const pr2B = calculateReceivedPower(ptxB, d2B, H_MS_B, fc2, 2);
+        
+        msATooltip.innerHTML = `<b>hRx_A=${H_MS_A.toFixed(1)}m</b><br>d1_A=${d1A.toFixed(1)}m, d2_A=${d2A.toFixed(1)}m<br>Pr1_A=${pr1A.toFixed(2)}dBm<br>Pr2_A=${pr2A.toFixed(2)}dBm`;
+        msBTooltip.innerHTML = `<b>hRx_B=${H_MS_B.toFixed(1)}m</b><br>d1_B=${d1B.toFixed(1)}m, d2_B=${d2B.toFixed(1)}m<br>Pr1_B=${pr1B.toFixed(2)}dBm<br>Pr2_B=${pr2B.toFixed(2)}dBm`;
+    }
+
+    function takeReading() {
+        if (readings.length >= MAX_READINGS) return showCustomAlert(`You can only take ${MAX_READINGS} readings.`);
+        const { d1: d1A, d2: d2A } = getDistances(msA_container);
+        const { d1: d1B, d2: d2B } = getDistances(msB_container);
+        const ptxA = parseFloat(document.getElementById('ptx_a').value);
+        const ptxB = parseFloat(document.getElementById('ptx_b').value);
+        const fc1 = parseFloat(document.getElementById('fc1').value);
+        const fc2 = parseFloat(document.getElementById('fc2').value);
+        const pr1A = calculateReceivedPower(ptxA, d1A, H_MS_A, fc1, 1);
+        const pr2A = calculateReceivedPower(ptxA, d2A, H_MS_A, fc2, 2);
+        const pr1B = calculateReceivedPower(ptxB, d1B, H_MS_B, fc1, 1);
+        const pr2B = calculateReceivedPower(ptxB, d2B, H_MS_B, fc2, 2);
+        
+        readings.push({ d1A, d2A, d1B, d2B, pr1A, pr2A, pr1B, pr2B, hRx_A: H_MS_A, hRx_B: H_MS_B });
+
+        document.querySelector('#readingsTable1 tbody').innerHTML += `<tr><td>${pr1A.toFixed(2)}</td><td>${d1A.toFixed(1)}</td><td>${pr1B.toFixed(2)}</td><td>${d1B.toFixed(1)}</td></tr>`;
+        document.querySelector('#readingsTable2 tbody').innerHTML += `<tr><td>${pr2A.toFixed(2)}</td><td>${d2A.toFixed(1)}</td><td>${pr2B.toFixed(2)}</td><td>${d2B.toFixed(1)}</td></tr>`;
+        
+        const tables = ['#resultsTable1', '#resultsTable2', '#resultsTable3', '#resultsTable4'];
+        const dists = [d1A, d2A, d1B, d2B];
+        tables.forEach((tableId, i) => {
+             const row = document.querySelector(`${tableId} tbody`).children[readings.length - 1];
+             row.querySelector('.dist').textContent = `${dists[i].toFixed(1)}m`;
+             row.querySelector('.user-sinr').disabled = false;
+        });
+        if (readings.length >= MAX_READINGS) {
+            takeReadingBtn.disabled = true;
+            takeReadingBtn.textContent = 'Readings Full';
+        }
+    }
+    
+    function dBmToWatt(dBm) { return 0.001 * Math.pow(10, dBm / 10); }
+    function wattToDB(watt) { return 10 * Math.log10(watt); }
+    
+    function calculateSINR(r) {
+        const pn_w = dBmToWatt(PN_DBM);
+        const sinr1A = wattToDB(dBmToWatt(r.pr1A) / (dBmToWatt(r.pr1B) + pn_w));
+        const sinr2A = wattToDB(dBmToWatt(r.pr2A) / (dBmToWatt(r.pr2B) + pn_w));
+        const sinr1B = wattToDB(dBmToWatt(r.pr1B) / (dBmToWatt(r.pr1A) + pn_w));
+        const sinr2B = wattToDB(dBmToWatt(r.pr2B) / (dBmToWatt(r.pr2A) + pn_w));
+        return { sinr1A, sinr2A, sinr1B, sinr2B };
+    }
+    
+    function checkResults() {
+        if (readings.length === 0) return showCustomAlert("Please take readings first.");
+        readings.forEach((r, i) => {
+            const { sinr1A, sinr2A, sinr1B, sinr2B } = calculateSINR(r);
+            checkSingleResult('#resultsTable1', i, sinr1A);
+            checkSingleResult('#resultsTable2', i, sinr2A);
+            checkSingleResult('#resultsTable3', i, sinr1B);
+            checkSingleResult('#resultsTable4', i, sinr2B);
+        });
+        checkBtn.disabled = true;
+        plotBtn.disabled = false;
+        reportBtn.disabled = false;
+    }
+
+    function checkSingleResult(tableId, index, calculatedSinr) {
+        const row = document.querySelector(`${tableId} tbody`).children[index];
+        const userInputEl = row.querySelector('.user-sinr');
+        const userInput = parseFloat(userInputEl.value);
+        userInputEl.style.backgroundColor = (!isNaN(userInput) && Math.abs(userInput - calculatedSinr) < 0.1) ? '#d4edda' : '#f8d7da';
+        row.querySelector('.calc-sinr').textContent = calculatedSinr.toFixed(2);
+    }
+    
+    function plotResults() {
+        if (readings.length === 0) return showCustomAlert("Please take readings to plot.");
+        if (plotChart) plotChart.destroy();
+
+        const userValues = {
+            userSinr1A: Array.from(document.querySelectorAll('#resultsTable1 .user-sinr')).map(i => parseFloat(i.value)),
+            userSinr2A: Array.from(document.querySelectorAll('#resultsTable2 .user-sinr')).map(i => parseFloat(i.value)),
+            userSinr1B: Array.from(document.querySelectorAll('#resultsTable3 .user-sinr')).map(i => parseFloat(i.value)),
+            userSinr2B: Array.from(document.querySelectorAll('#resultsTable4 .user-sinr')).map(i => parseFloat(i.value)),
+        };
+
+        let plotData = readings.map((r, i) => ({
+            ...r, ...calculateSINR(r),
+            userSinr1A: userValues.userSinr1A[i], userSinr2A: userValues.userSinr2A[i],
+            userSinr1B: userValues.userSinr1B[i], userSinr2B: userValues.userSinr2B[i],
+        }));
+
+        plotData.sort((a, b) => a.d1A - b.d1A);
+
+        const labels = plotData.map(p => p.d1A.toFixed(1));
+        const datasets = [
+            { label: 'SINR_BS1_A', data: plotData.map(p => p.sinr1A), borderColor: 'black', borderWidth: 2, pointStyle: 'rectRot', radius: 5 },
+            { label: 'SINR_BS1_B', data: plotData.map(p => p.sinr1B), borderColor: '#e60049', pointStyle: 'rect', radius: 4 },
+            { label: 'SINR_BS2_A', data: plotData.map(p => p.sinr2A), borderColor: '#f8c822', pointStyle: 'triangle', radius: 5 },
+            { label: 'SINR_BS2_B', data: plotData.map(p => p.sinr2B), borderColor: '#a200a6', pointStyle: 'star', radius: 6 },
+            { label: 'SINR_BS1_A(EnteredValue)', data: plotData.map(p => p.userSinr1A), borderColor: '#00bfa0', pointStyle: 'triangle', radius: 5, borderDash: [5, 5] },
+            { label: 'SINR_BS1_B(EnteredValue)', data: plotData.map(p => p.userSinr1B), borderColor: '#4d80e4', borderDash: [5, 5] },
+            { label: 'SINR_BS2_A(EnteredValue)', data: plotData.map(p => p.userSinr2A), borderColor: '#00d0e2', borderDash: [5, 5] },
+            { label: 'SINR_BS2_B(EnteredValue)', data: plotData.map(p => p.userSinr2B), borderColor: '#ffa500', borderDash: [5, 5] },
+        ];
+
+        const ctx = plotCanvas.getContext('2d');
+        plotChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels, datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false, tension: 0.1,
+                plugins: { 
+                    title: { display: true, text: 'SINR vs Distance', font: { size: 16 } },
+                    legend: { position: 'bottom' }
+                },
+                scales: { 
+                    x: { title: { display: true, text: 'Distance(m)' } }, 
+                    y: { title: { display: true, text: 'SINR(dB)' } } 
+                }
+            }
+        });
+    }
+
+    async function generateReport() {
+        if (readings.length === 0) return showCustomAlert("No data to report.");
+        reportBtn.textContent = 'Generating...';
+        reportBtn.disabled = true;
+        
+        const graphImgSrc = plotChart ? plotChart.toBase64Image() : '';
+
+        const userSinr1A = Array.from(document.querySelectorAll('#resultsTable1 .user-sinr')).map(i => i.value);
+        const userSinr2A = Array.from(document.querySelectorAll('#resultsTable2 .user-sinr')).map(i => i.value);
+        const userSinr1B = Array.from(document.querySelectorAll('#resultsTable3 .user-sinr')).map(i => i.value);
+        const userSinr2B = Array.from(document.querySelectorAll('#resultsTable4 .user-sinr')).map(i => i.value);
+
+        let parametersHtml = `
+            <p><b>Power Tx MS A:</b> ${document.getElementById('ptx_a').value} dBm, <b>Power Tx MS B:</b> ${document.getElementById('ptx_b').value} dBm</p>
+            <p><b>Frequency 1:</b> ${document.getElementById('fc1').value} GHz, <b>Frequency 2:</b> ${document.getElementById('fc2').value} GHz</p>
+            <p><b>Vertical Beam Pattern:</b> ${verticalBeamCheckbox.checked ? `Enabled (Tilt BS1: ${document.getElementById('tiltAngleBS1').value}°, Tilt BS2: ${document.getElementById('tiltAngleBS2').value}°)` : 'Disabled'}</p>
+            <p><b>Shadowing:</b> ${document.getElementById('shadowing').checked ? 'Enabled' : 'Disabled'}</p>
+        `;
+        
+        let tableHtml = `<table style="width:100%; border-collapse: collapse; font-size: 8px; margin-top: 8px;">
+            <thead>
+                <tr>
+                    <th colspan="8" style="background-color: #6B8E23; color: white; border: 1px solid #556B2F;">Base Station 1</th>
+                    <th colspan="8" style="background-color: #6B8E23; color: white; border: 1px solid #556B2F;">Base Station 2</th>
+                </tr>
+                <tr>
+                    <th style="background-color: #FFD700;">Pr1_A(dBm)</th>
+                    <th style="background-color: #FFD700;">d1_A(m)</th>
+                    <th style="background-color: #FFD700;">Pr1_B(dBm)</th>
+                    <th style="background-color: #FFD700;">d1_B(m)</th>
+                    <th style="background-color: #FFD700;">SINR_A(dB)</th>
+                    <th style="background-color: #FFD700;">SINR_B(dB)</th>
+                    <th style="background-color: #20B2AA; color: white;">Entered SINR_A(dB)</th>
+                    <th style="background-color: #20B2AA; color: white;">Entered SINR_B(dB)</th>
+                    <th style="background-color: #FFD700;">Pr2_A(dBm)</th>
+                    <th style="background-color: #FFD700;">d2_A(m)</th>
+                    <th style="background-color: #FFD700;">Pr2_B(dBm)</th>
+                    <th style="background-color: #FFD700;">d2_B(m)</th>
+                    <th style="background-color: #FFD700;">SINR_A(dB)</th>
+                    <th style="background-color: #FFD700;">SINR_B(dB)</th>
+                    <th style="background-color: #20B2AA; color: white;">Entered SINR_A(dB)</th>
+                    <th style="background-color: #20B2AA; color: white;">Entered SINR_B(dB)</th>
+                </tr>
+            </thead><tbody>`;
+        readings.forEach((r, i) => {
+            const { sinr1A, sinr2A, sinr1B, sinr2B } = calculateSINR(r);
+            tableHtml += `<tr>
+                <td>${r.pr1A.toFixed(2)}</td><td>${r.d1A.toFixed(1)}</td>
+                <td>${r.pr1B.toFixed(2)}</td><td>${r.d1B.toFixed(1)}</td>
+                <td>${sinr1A.toFixed(2)}</td><td>${sinr1B.toFixed(2)}</td>
+                <td>${userSinr1A[i]}</td><td>${userSinr1B[i]}</td>
+                <td>${r.pr2A.toFixed(2)}</td><td>${r.d2A.toFixed(1)}</td>
+                <td>${r.pr2B.toFixed(2)}</td><td>${r.d2B.toFixed(1)}</td>
+                <td>${sinr2A.toFixed(2)}</td><td>${sinr2B.toFixed(2)}</td>
+                <td>${userSinr2A[i]}</td><td>${userSinr2B[i]}</td>
+            </tr>`;
+        });
+        tableHtml += `</tbody></table>`;
+
+        const reportHtml = `<div style="font-family: 'Verdana', sans-serif; font-size: 12px; padding: 20px;">
+                <h3 style="text-align: center; font-size: 16px; font-weight: bold; margin-bottom: 16px;">Experiment Report</h3>
+                <p><b>Report for:</b> ${userName}</p><p><b>Date:</b> ${new Date().toLocaleString()}</p><br>
+                <h4 style="font-size: 14px; font-weight: bold;">--- Simulation Parameters ---</h4>${parametersHtml}<br>
+                <h4 style="font-size: 14px; font-weight: bold;">--- Data Readings & Calculated SINR ---</h4>${tableHtml}
+                <div style="text-align: center; margin-top: 20px;">
+                    <img src="${graphImgSrc}" style="max-width: 100%; max-height: 400px; object-fit: contain;" />
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 80px;">
+                    <p>(Signature of the Candidate)</p><p>(Signature of Faculty)</p>
+                </div></div>`;
+
+        document.getElementById('reportContentForPdf').innerHTML = reportHtml;
+        const { jsPDF } = window.jspdf;
+        const pdfContainer = document.getElementById('pdf-report-container');
+        pdfContainer.classList.remove('hidden');
+
+        try {
+            const canvas = await html2canvas(pdfContainer, { scale: 2 });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({ orientation: 'l', unit: 'mm', format: 'a4' });
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('SINR_Uplink_Report.pdf');
+        } catch (error) {
+            showCustomAlert("Could not generate the report PDF.");
+        } finally {
+            pdfContainer.classList.add('hidden');
+            reportBtn.textContent = 'REPORT';
+            reportBtn.disabled = false;
+        }
+    }
+    
+    function showCustomAlert(message) {
+        const alertModal = document.createElement('div');
+        alertModal.className = 'modal-overlay';
+        alertModal.innerHTML = `<div class="modal-content text-center"><p class="mb-4">${message}</p><button class="btn px-6 py-2 rounded-md">OK</button></div>`;
+        document.body.appendChild(alertModal);
+        alertModal.querySelector('button').addEventListener('click', () => { document.body.removeChild(alertModal); });
+    }
+    function showCustomConfirm(message, callback) {
+        const confirmModal = document.createElement('div');
+        confirmModal.className = 'modal-overlay';
+        confirmModal.innerHTML = `<div class="modal-content text-center"><p class="mb-4">${message}</p><div class="space-x-4"><button id="confirmOk" class="btn px-6 py-2 rounded-md">OK</button><button id="confirmCancel" class="btn-secondary px-6 py-2 rounded-md">Cancel</button></div></div>`;
+        document.body.appendChild(confirmModal);
+        confirmModal.querySelector('#confirmOk').addEventListener('click', () => { callback(); document.body.removeChild(confirmModal); });
+        confirmModal.querySelector('#confirmCancel').addEventListener('click', () => { document.body.removeChild(confirmModal); });
+    }
+});
+</script>
+
+<script src="../assets/js/iframeResize.js"></script>
+        
+        </body>
+</html>
