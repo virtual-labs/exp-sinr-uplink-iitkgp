@@ -3,8 +3,7 @@
 Follow the instructions given below to perform the experiments:-
 
 
-* Step 1: Click on the experiment you want to do by clicking on either 'Click here to start Experiment 5A (Downlink)' or 'Click here to start Experiment 5B (Uplink)'.
-
+* Step 1: 'Click here to start' for Experiment 5B (Uplink)
 <div align="center">
     <img src="images/instruction1.png" alt="Large Scale Fading">  
       </div>
@@ -12,7 +11,7 @@ Follow the instructions given below to perform the experiments:-
    
 ## 1.2 Starting Experiment 5B :-
 
-* Step 2: Let Experiment 5B (Uplink) is chosen. Click on the button START. A page appears with a dialogue box asking for your name. Enter your name and click OK.
+* Step 2:  A page appears with a dialogue box asking for your name. Enter your name and click OK.
 
 <div align="center">
     <img src="images/instruction11.png" alt="Large Scale Fading">  
